@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>
+
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+table {
+    border-collapse: collapse;
+}
+table *{
+     border: 1px solid #AAA;
+}
+table thead {
+    background-color: #888;
+    color: white;
+}
+table td, table th {
+    padding: 10px;
+}
+    </style>
+
+</head>
+<body>
+
+    <div id="div">
+       
+    </div>
+
+    <div id="tableHolder"></div>
+
+    <script type="text/javascript">
+           var data = [{
+             "company_name": "Medline Industries, Inc.",
+             "product": "Benzalkonium Chloride",
+             "price": "481.63"
+           }, {
+             "company_name": "PD-Rx Pharmaceuticals, Inc.",
+             "product": "Alprazolam",
+             "price": "167.62",
+             "fda_date_approved": "02/12/2015"
+           }, {
+             "company_name": "West-ward Pharmaceutical Corp.",
+             "product": "Flumazenil",
+             "fda_date_approved": "23/04/2015"
+           }, {
+             "company_name": "HyVee Inc",
+             "product": "Aspirin",
+             "price": "218.32",
+             "fda_date_approved": "26/07/2015"
+           }, {
+             "company_name": "Aurobindo Pharma Limited",
+             "product": "carisoprodol",
+             "price": "375.58",
+             "fda_date_approved": "28/11/2014"
+           }, {
+             "company_name": "Apotex Corp",
+             "product": "Risperidone",
+             "price": "213.49",
+             "fda_date_approved": "06/11/2015"
+           }, {
+             "company_name": "Unit Dose Services",
+             "product": "Lovastatin",
+             "price": "169.14",
+             "fda_date_approved": "14/09/2015"
+           }, {
+             "company_name": "Jubilant HollisterStier LLC",
+             "product": "Dog Hair Canis spp.",
+             "fda_date_approved": "31/12/2014"
+           }, {
+             "company_name": "AAA Pharmaceutical, Inc.",
+             "product": "ACETAMINOPHEN, CHLORPHENIRAMINE MALEATE, DEXTROMETHORPHAN HYDROBROMIDE, and PHENYLEPHRINE HYDROCHLORIDE",
+             "price": "183.33",
+             "fda_date_approved": "13/12/2015"
+           }, {
+             "company_name": "AKG Innovations LLC",
+             "product": "AVOBENZONE, OCTINOXATE, OCTISALATE",
+             "fda_date_approved": "22/01/2015"
+           }, {
+             "company_name": "hikma Farmaceutica",
+             "product": "Oxytocin"
+           }, {
+             "company_name": "prime Packaging, Inc.",
+             "product": "Avobenzone, Homosalate, Octisalate, Octocrylene, Oxybenzone",
+             "price": "208.17"
+           }, {
+             "company_name": "Davion, Inc",
+             "product": "Triclosan",
+             "price": "80.30",
+             "fda_date_approved": "13/12/2014"
+           }, {
+             "company_name": "CARDINAL HEALTH",
+             "product": "CARBOXYMETHYLCELLULOSE SODIUM, GLYCERIN",
+             "price": "330.22",
+             "fda_date_approved": "11/08/2015"
+           }, {
+             "company_name": "Amgen Inc",
+             "product": "darbepoetin alfa",
+             "price": "332.28",
+             "fda_date_approved": "01/07/2015"
+           }, {
+             "company_name": "Autumn Harp, Inc.",
+             "product": "Salicylic Acid",
+             "price": "34.43",
+             "fda_date_approved": "25/03/2015"
+           }, {
+             "company_name": "American Regent, Inc.",
+             "product": "sodium phosphate, monobasic, monohydrate and sodium phosphate, dibasic anhydrous",
+             "price": "11.60"
+           }, {
+             "company_name": "J. A. Cosmetics U.S. INC",
+             "product": "TITANIUM DIOXIDE",
+             "price": "130.90",
+             "fda_date_approved": "01/12/2015"
+           }, {
+             "company_name": "NATURE REPUBLIC CO., LTD.",
+             "product": "Titanium Dioxide, OCTINOXATE, Zinc Oxide",
+             "price": "124.48"
+           }, {
+             "company_name": "L. Perrigo Company",
+             "product": "Dextromethorphan Hydrobromide, Guaifenesin",
+             "price": "73.09",
+             "fda_date_approved": "03/02/2016"
+           }];
+
+           String.prototype.format = function() {
+             var args = arguments;
+             return this.replace(/{(\d+)}/g, function(match, number) {
+               return typeof args[number] != 'undefined' ?
+                 args[number] :
+                 match;
+             });
+           };
+
+           var thead = {
+             temp: [],
+             content: [],
+             nowCount: 0,
+             preCount: 0,
+             output: [],
+           }
+
+           var tbody = {
+             temp: [],
+             content: [],
+             output: []
+           }
+
+           var table = {
+             entire: '<table>{0}{1}</table>',
+             thead: '<thead><tr>{0}</tr></thead>',
+             tbody: '<tbody>{0}</tbody>',
+             th: "<th onclick=sortResults('{0}','asc')>{0}</th>",
+             td: '<td>{0}</td>',
+             tr: '<tr>{0}</tr>'
+           }
+
+           function getTbodyContent() {
+            tbody.content = [];
+             for (var i in data) {
+               for (var j = 0; j < thead.preCount; j++) {
+                 tbody.temp.push(table.td.format(data[i][thead.content[j]] ? data[i][thead.content[j]] : ''));
+               }
+               tbody.content.push(table.tr.format(tbody.temp.join('')));
+               tbody.temp = []
+             }
+
+             return tbody.content.join('');
+           }
+
+           function getTheadContent() {
+             for (var i in data) {
+               for (var th in data[i]) {
+                 thead.nowCount++;
+                 thead.temp.push(th);
+               }
+               if (thead.preCount < thead.nowCount) {
+                 thead.preCount = thead.nowCount;
+                 thead.content = thead.temp;
+
+               }
+               thead.nowCount = 0;
+               thead.temp = [];
+             }
+             for (var t of thead.content) thead.output.push(table.th.format(t));
+
+             return table.thead.format(thead.output.join(''));
+           }
+
+           function getTableContent() {
+             return table.entire.format(getTheadContent(), getTbodyContent());
+           }
+
+           var tableHolder = document.getElementById('tableHolder');
+           tableHolder.innerHTML = getTableContent();
+
+            function sortResults(prop, asc) {
+            data = data.sort(function(a, b) {
+                if (asc) {
+                    return (a[prop] > b[prop]) ? 1 : ((a[prop] < b[prop]) ? -1 : 0);
+                } else {
+                    return (b[prop] > a[prop]) ? 1 : ((b[prop] < a[prop]) ? -1 : 0);
+                }
+            });
+            showResults();
+        }
+
+        function showResults()
+        {
+            document.querySelector('tbody').innerHTML = getTbodyContent();
+        }
+    </script>
+
+</body>
+</html>
